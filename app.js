@@ -3,6 +3,15 @@
 
 // Create web server
 
+var http = require('http');
+http.createServer((req, res) => {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    setInterval(function(){
+        res.write(new Date() + "\n");
+    }, 1000);
+    // res.end('Hello World\n');
+}).listen(1337);
+console.log('Server running at http://127.0.0.1:1337');
 // Handle http route GET / and POST /
     // if url === '/' && GET
         // show search field
