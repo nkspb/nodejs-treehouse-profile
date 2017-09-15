@@ -10,9 +10,3 @@ http.createServer((req, res) => {
 }).listen(1337);
 console.log('Server running at http://127.0.0.1:1337');
 
-    
-
-// Handle reading of files and merge in values
-    // Read from file and get a string
-        // Merge values in to string
-

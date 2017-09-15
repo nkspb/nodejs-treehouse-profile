@@ -1,13 +1,14 @@
 var Profile = require("./profile.js");
-
+var renderer = require("./renderer.js");
 
 // Handle http route GET / and POST /
 function home(req, res){
     if(req.url == "/") {
         res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.write("Header\n");
-        res.write("Search\n");
-        res.end("Footer\n");
+        renderer.view("header", {}, res);
+        renderer.view("search", {}, res);
+        renderer.view("footer", {}, res);
+        res.end();
     }
     
     // if url === '/' && GET
@@ -21,7 +22,7 @@ function user(req, res) {
     var username = req.url.replace("/", "");
     if(username.length > 0) {
         res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.write("Header\n");
+        renderer.view("header", {}, res);
 
         // get json
         var studentProfile = new Profile(username);
@@ -36,13 +37,16 @@ function user(req, res) {
                 javascriptPoints: profileJSON.points.JavaScript
             }
             // Simple response
-            res.write(values.username + " has " + values.badges + ' badges\n');
-            res.end('Footer\n');
+            renderer.view("profile", values, res);
+            renderer.view("footer", {}, res);
+            res.end();
         });
         studentProfile.on("error", function(err){
             // show error
-            res.write(err.message + "\n");
-            res.end('Footer\n');
+            renderer.view("error", {errorMessage: err.message}, res);
+            renderer.view("search", {}, res);
+            renderer.view("footer", {}, res);
+            res.end();
         });  
         
     }
