@@ -1,27 +1,39 @@
 var Profile = require("./profile.js");
 var renderer = require("./renderer.js");
+var querystring = require("querystring");
 
+var commonHeaders = {'Content-Type': 'text/html'};
 // Handle http route GET / and POST /
 function home(req, res){
     if(req.url == "/") {
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        renderer.view("header", {}, res);
-        renderer.view("search", {}, res);
-        renderer.view("footer", {}, res);
-        res.end();
-    }
-    
-    // if url === '/' && GET
+        // if url === '/' && GET
         // show search field
-    // if url == "/" && POST
-        // redirect to /:username
+        if (req.method.toLowerCase() === 'get') {
+            res.writeHead(200, commonHeaders);
+            renderer.view("header", {}, res);
+            renderer.view("search", {}, res);
+            renderer.view("footer", {}, res);
+            res.end();
+        } else {
+            // if url == "/" && POST
+            req.on("data", function(postBody) {
+                // get post data from body
+                var query = querystring.parse(postBody.toString());
+                // extracts the username
+                res.write(query.username);
+                res.end();
+                // redirect to /:username
+            });
+        }
+    }
 }
+
 // Handle http route GET /:username
 function user(req, res) {
     // if url == "/...."
     var username = req.url.replace("/", "");
     if(username.length > 0) {
-        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.writeHead(200, commonHeaders);
         renderer.view("header", {}, res);
 
         // get json
@@ -58,3 +70,4 @@ function user(req, res) {
 
 module.exports.home = home;
 module.exports.user = user;
+
