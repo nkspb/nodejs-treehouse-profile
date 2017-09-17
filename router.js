@@ -19,10 +19,9 @@ function home(req, res){
             req.on("data", function(postBody) {
                 // get post data from body
                 var query = querystring.parse(postBody.toString());
-                // extracts the username
-                res.write(query.username);
-                res.end();
                 // redirect to /:username
+                res.writeHead(303, {"Location": "/" + query.username });
+                res.end();
             });
         }
     }
