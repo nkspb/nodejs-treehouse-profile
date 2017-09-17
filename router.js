@@ -1,8 +1,20 @@
 var Profile = require("./profile.js");
 var renderer = require("./renderer.js");
 var querystring = require("querystring");
+var fs = require('fs');
 
 var commonHeaders = {'Content-Type': 'text/html'};
+
+// Handle css route
+function serveCSS(req, res) {
+    if (req.url.indexOf(".css") !== -1){
+        var file = fs.readFileSync(`.${req.url}`, {'encoding' : 'utf-8'});
+        res.writeHead(200, {'Content-Type' : 'text/css'});
+        res.write(file);
+        res.end();
+    }
+}
+
 // Handle http route GET / and POST /
 function home(req, res){
     if(req.url == "/") {
@@ -31,7 +43,7 @@ function home(req, res){
 function user(req, res) {
     // if url == "/...."
     var username = req.url.replace("/", "");
-    if(username.length > 0) {
+    if(username.length > 0 && req.url.indexOf('.css') === -1) {
         res.writeHead(200, commonHeaders);
         renderer.view("header", {}, res);
 
@@ -67,6 +79,7 @@ function user(req, res) {
                 // show error
 }
 
+module.exports.serveCSS = serveCSS;
 module.exports.home = home;
 module.exports.user = user;
 
